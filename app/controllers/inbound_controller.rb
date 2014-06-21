@@ -5,12 +5,13 @@ class InboundController < ApplicationController
     puts 'Inbound Email'
 
     #todo: get the list from the To param
-    #todo: ensure person who has sent to the list is on the list.
+    #todo: ensure person who has sent (From) to the list is on the list.
     email = params
 
     message = Mail.new do
-      from            'team@ladragons.com'
-      to              'Matt Van <mattv@mumsweb.net>'
+      from            'team@dragons.email' #Adjust from to be from the original author.
+      to              'Matt Van <mattv@mumsweb.net>' #use bcc to send
+      bcc             'Matt Van <mattvanveenendaal@mgmail.com>' #bcc
       subject         'Test Email from the Dragons'
       text_part do
         body email[:TextBody]
