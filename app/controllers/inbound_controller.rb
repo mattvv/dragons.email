@@ -13,14 +13,14 @@ class InboundController < ApplicationController
       to              'Matt Van <mattv@mumsweb.net>' #use bcc to send
       bcc             'Matt Van <mattvanveenendaal@gmail.com>' #bcc
       subject         'Test Email from the Dragons'
-      text_part do
-        body email[:TextBody]
-      end
+      # text_part do
+      #   body email[:TextBody]
+      # end
 
-      html_part do
+      # html_part do
         content_type  'text/html; charset=UTF-8'
         body email[:HtmlBody]
-      end
+      # end
 
       delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
     end
