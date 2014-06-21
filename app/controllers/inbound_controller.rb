@@ -11,13 +11,14 @@ class InboundController < ApplicationController
     message = Mail.new do
       from            'team@dragons.email' #Adjust from to be from the original author.
       to              'Matt Van <mattv@mumsweb.net>' #use bcc to send
-      bcc             'Matt Van <mattvanveenendaal@mgmail.com>' #bcc
+      bcc             'Matt Van <mattvanveenendaal@gmail.com>' #bcc
       subject         'Test Email from the Dragons'
       text_part do
         body email[:TextBody]
       end
 
       html_part do
+        content_type  'text/html; charset=UTF-8'
         body email[:HtmlBody]
       end
 
