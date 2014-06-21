@@ -1,4 +1,4 @@
-class InboundControllerController < ApplicationController
+class InboundController < ApplicationController
   def create
     puts 'Inbound Email'
 
