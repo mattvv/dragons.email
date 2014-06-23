@@ -16,13 +16,10 @@ class InboundController < ApplicationController
     subject = params[:Subject]
     from = params[:From]
 
-    puts "To is #{params[:To]}"
-    puts "List is #{list}"
 
 
     if list
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-        puts "EMAIL IS IN THE LIST, SENDING TO #{list.email}"
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
@@ -30,6 +27,7 @@ class InboundController < ApplicationController
           from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
           bcc             list.formatted_emails_without(from) #bcc
           subject         subject
+          reply_to        list.email
           text_part do
             body email[:TextBody]
           end
