@@ -1,5 +1,6 @@
 class EmailsController < ApplicationController
   def create
+    params[:email] = params[:email].downcase
     @email = Email.create(params[:email].permit(:list_id, :email, :name))
     redirect_to :back
   end
