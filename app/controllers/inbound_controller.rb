@@ -10,16 +10,16 @@ class InboundController < ApplicationController
     list = List.where(email: params[:To]).first
     from_name = params[:FromName]
     subject = params[:Subject]
+    from = params[:From]
 
     if list
-      if list.emails.map(&:email).include? params[:From]
-        puts "email #{params[:From]} is in list #{list.emails.map(&:email).inspect}"
+      if list.emails.map(&:email).include? from
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
         message = Mail.new do
           from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
-          bcc             list.formatted_emails #bcc
+          bcc             list.formatted_emails_without(from) #bcc
           subject         subject
           text_part do
             body email[:TextBody]
