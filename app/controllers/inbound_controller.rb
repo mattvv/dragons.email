@@ -11,12 +11,16 @@ class InboundController < ApplicationController
       params[:To] = params[:To].match(/[A-Za-z\d_\-\.+]+@[A-Za-z\d_\-\.]+\.[A-Za-z\d_\-]+/)[0]
     end
 
+    if params[:to] == params[:From]
+      #this means it was sent from us!
+      render json: {} and return
+    end
+
+
     list = List.where(email: params[:To]).first
     from_name = params[:FromName]
     subject = params[:Subject]
     from = params[:From]
-
-
 
     if list
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
@@ -28,6 +32,7 @@ class InboundController < ApplicationController
           bcc             list.formatted_emails_without(from) #bcc
           subject         subject
           reply_to        list.email
+          to              list.email
           text_part do
             body email[:TextBody]
           end
