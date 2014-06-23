@@ -1,0 +1,37 @@
+%h1
+  = @list.email
+  Mailing List
+
+%h2
+  Subscribers
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th Name
+      %th Email
+      %th Actions
+  %tbody
+    - @list.emails.each do |email|
+      %tr
+        %td= email.name
+        %td= email.email
+        %td
+          = link_to 'Delete', email_path(email), method: :delete
+
+%h2 Add a Subscriber
+= form_for @email, html: { class: 'form-horizontal', role: 'form'} do |f|
+  = f.hidden_field :list_id, value: @list.id
+
+  .form-group
+    = f.label :email, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_field :email, class: 'form-control', placeholder: 'enter subscribers email'
+
+  .form-group
+    = f.label :name, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_field :name, class: 'form-control', placeholder: 'enter subscribers name'
+
+  .col-sm-10
+    = f.submit 'Create List', class: 'btn btn-default'

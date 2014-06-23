@@ -1,0 +1,26 @@
+
+%h1 Lists
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th List Email
+      %th Subscribers
+      %th Actions
+  %tbody
+    - @lists.each do |list|
+      %tr
+        %td= list.email
+        %td= list.emails.count
+        %td
+          = link_to 'Edit', list_path(list), class: 'btn btn-default'
+
+%h2 Create a list
+= form_for @list, html: { class: 'form-horizontal', role: 'form'} do |f|
+  .form-group
+    = f.label :email, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_field :email, class: 'form-control', placeholder: 'listname@dragons.email'
+
+  .col-sm-10
+    = f.submit 'Create List', class: 'btn btn-default'

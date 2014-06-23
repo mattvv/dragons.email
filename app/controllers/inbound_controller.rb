@@ -4,29 +4,39 @@ class InboundController < ApplicationController
   def create
     puts 'Inbound Email'
 
-    #todo: get the list from the To param
+    #todo: get the list from the To param (not including current senders email)
     #todo: ensure person who has sent (From) to the list is on the list.
-    email = params
-    coder = HTMLEntities.new
-    html = coder.decode(email[:HtmlBody])
-    message = Mail.new do
-      from            'team@dragons.email' #Adjust from to be from the original author.
-      to              'Matt Van <mattv@mumsweb.net>' #use bcc to send
-      bcc             'Matt Van <mattvanveenendaal@gmail.com>' #bcc
-      subject         'Test Email from the Dragons'
-      text_part do
-        body email[:TextBody]
-      end
 
-      html_part do
-        content_type  'text/html; charset=UTF-8'
-        body html
-      end
+    list = List.where(email: params[:To]).first
+    from_name = params[:FromName]
+    subject = params[:Subject]
 
-      delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+    if list
+      if list.emails.include? params[:From]
+        email = params
+        coder = HTMLEntities.new
+        html = coder.decode(email[:HtmlBody])
+        message = Mail.new do
+          from            'team@dragons.email' + " <#{from_name}>" #Adjust from to be from the original author.
+          bcc             list.formatted_emails #bcc
+          subject         subject
+          text_part do
+            body email[:TextBody]
+          end
+
+          html_part do
+            content_type  'text/html; charset=UTF-8'
+            body html
+          end
+
+          delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+        end
+
+        message.deliver
+      else
+        #todo: deliver a bounced email.
+      end
     end
-
-    message.deliver
     render json: {}
   end
 end
