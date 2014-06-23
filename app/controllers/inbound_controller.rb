@@ -12,7 +12,9 @@ class InboundController < ApplicationController
     subject = params[:Subject]
 
     if list
+      puts "got list"
       if list.emails.include? params[:From]
+        puts "email is in list"
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
@@ -35,6 +37,7 @@ class InboundController < ApplicationController
 
         message.deliver
       else
+        puts "email is not in list"
         #todo: deliver a bounced email.
       end
     end
