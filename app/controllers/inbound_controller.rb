@@ -12,7 +12,10 @@ class InboundController < ApplicationController
     subject = params[:Subject]
     from = params[:From]
 
-    if list
+    puts "To is #{params[:To]}"
+    puts "List is #{list}"
+
+    if list.exists?
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
         puts "EMAIL IS IN THE LIST, SENDING TO #{list.email}"
         email = params
