@@ -13,8 +13,9 @@ class InboundController < ApplicationController
 
     if list
       puts "got list"
-      if list.emails.include? params[:From]
-        puts "email is in list"
+      puts "params are #{params}"
+      if list.emails.map(:email).include? params[:From]
+        puts "email #{params[:From]} is in list #{list.emails.map(:email).inspect}"
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
