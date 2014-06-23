@@ -20,7 +20,7 @@ class InboundController < ApplicationController
     puts "List is #{list}"
 
 
-    if list.exists?
+    if list
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
         puts "EMAIL IS IN THE LIST, SENDING TO #{list.email}"
         email = params
