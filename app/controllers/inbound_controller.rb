@@ -7,6 +7,10 @@ class InboundController < ApplicationController
     #todo: get the list from the To param (not including current senders email)
     #todo: ensure person who has sent (From) to the list is on the list.
 
+    if params[:To].include? "<"
+      params[:To] = params[:To].match(/[A-Za-z\d_\-\.+]+@[A-Za-z\d_\-\.]+\.[A-Za-z\d_\-]+/)[0]
+    end
+
     list = List.where(email: params[:To]).first
     from_name = params[:FromName]
     subject = params[:Subject]
@@ -14,6 +18,7 @@ class InboundController < ApplicationController
 
     puts "To is #{params[:To]}"
     puts "List is #{list}"
+
 
     if list.exists?
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
