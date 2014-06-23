@@ -6,5 +6,6 @@ class List < ActiveRecord::Base
     emails.each do |email|
       formatted << "#{email.name} <#{email.email}>,"
     end
+    formatted
   end
 end
