@@ -14,6 +14,7 @@ class InboundController < ApplicationController
 
     if list
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
+        puts "EMAIL IS IN THE LIST, SENDING TO #{list.email}"
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
