@@ -37,6 +37,12 @@ class InboundController < ApplicationController
       else
         puts "email is not in list"
         #todo: deliver a bounced email.
+        message = Mail.new do
+          from "dragons@dragons.email"
+          to from
+          subject 'You must be registered to post on this group'
+          body "You are sending e-mail to this group, but your e-mail is not allowed to post on the group. Sorry"
+        end
       end
     end
     render json: {}
