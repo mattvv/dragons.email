@@ -13,7 +13,7 @@ class InboundController < ApplicationController
     from = params[:From]
 
     if list
-      if list.emails.map(&:email).include? from
+      if list.emails.map{ |x| x.email.downcase}.include? from.downcase
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
@@ -43,6 +43,7 @@ class InboundController < ApplicationController
           subject 'You must be registered to post on this group'
           body "You are sending e-mail to this group, but your e-mail is not allowed to post on the group. Sorry"
         end
+        message.deliver
       end
     end
     render json: {}
