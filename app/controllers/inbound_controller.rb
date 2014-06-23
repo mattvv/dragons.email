@@ -18,6 +18,7 @@ class InboundController < ApplicationController
         html = coder.decode(email[:HtmlBody])
         message = Mail.new do
           from            'team@dragons.email' + " <#{from_name}>" #Adjust from to be from the original author.
+          to              'noreply@dragons.email'
           bcc             list.formatted_emails #bcc
           subject         subject
           text_part do
