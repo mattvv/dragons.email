@@ -12,15 +12,13 @@ class InboundController < ApplicationController
     subject = params[:Subject]
 
     if list
-      puts "got list"
-      puts "params are #{params}"
       if list.emails.map(&:email).include? params[:From]
         puts "email #{params[:From]} is in list #{list.emails.map(&:email).inspect}"
         email = params
         coder = HTMLEntities.new
         html = coder.decode(email[:HtmlBody])
         message = Mail.new do
-          from            'team@dragons.email' + " <#{from_name}>" #Adjust from to be from the original author.
+          from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
           to              'noreply@dragons.email'
           bcc             list.formatted_emails #bcc
           subject         subject
