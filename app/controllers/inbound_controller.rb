@@ -47,15 +47,17 @@ class InboundController < ApplicationController
 
         message.deliver
       else
-        puts "email is not in list"
-        #todo: deliver a bounced email.
-        message = Mail.new do
-          from "team@dragons.email"
-          to from
-          subject 'You must be registered to post on this group'
-          body "You are sending e-mail to this group, but your e-mail is not allowed to post on the group. Sorry"
+        unless from.split("@").last == 'dragons.email'
+          puts "email is not in list"
+          #todo: deliver a bounced email.
+          message = Mail.new do
+            from "team@dragons.email"
+            to from
+            subject 'You must be registered to post on this group'
+            body "You are sending e-mail to this group, but your e-mail is not allowed to post on the group. Sorry"
+          end
+          message.deliver
         end
-        message.deliver
       end
     end
     render json: {}
