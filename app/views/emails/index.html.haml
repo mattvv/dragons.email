@@ -1,0 +1,39 @@
+%h1
+  Subscribers
+
+%table.table.table-striped
+  %thead
+    %tr
+      %th Name
+      %th Email
+      %th Phone Number
+      %th Notes
+      %th Lists
+      %th Actions
+  %tbody
+    - @emails.each do |email|
+      %tr
+        %td= email.name
+        %td= email.email
+        %td= email.phone_number
+        %td= email.note
+        %td
+          - email.lists.each do |list|
+            = link_to list.email.split('@').first, list_path(list.id), class: 'label label-default'
+        %td
+          = link_to 'Delete', email_path(email), method: :delete, class: 'btn btn-danger'
+
+%h2 Add a Subscriber
+= form_for @email, html: { class: 'form-horizontal', role: 'form'} do |f|
+  .form-group
+    = f.label :email, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_field :email, class: 'form-control', placeholder: 'enter subscribers email'
+
+  .form-group
+    = f.label :name, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_field :name, class: 'form-control', placeholder: 'enter subscribers name'
+
+  .col-sm-10
+    = f.submit 'Add Subscriber', class: 'btn btn-default'

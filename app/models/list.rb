@@ -1,5 +1,5 @@
 class List < ActiveRecord::Base
-  has_many :emails
+  has_and_belongs_to_many :emails
 
   def formatted_emails_without(from)
     formatted = ''
