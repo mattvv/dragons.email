@@ -14,7 +14,12 @@ class EmailsController < ApplicationController
       @email = Email.new(params[:email].permit(:email, :name))
     end
 
-    @email.save
+
+    if @email.save
+      flash[:success] = 'Added the subscriber'
+    else
+      flash[:error] = "Could not add Subscriber! #{@email.errors.full_messages}"
+    end
 
     redirect_to :back
   end

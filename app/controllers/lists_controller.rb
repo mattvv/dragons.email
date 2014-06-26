@@ -10,8 +10,13 @@ class ListsController < ApplicationController
       params[:list][:email] = "#{params[:list][:email]}@dragons.email"
     end
 
-    @list = List.create(params[:list].permit(:email))
-    #todo: flash notice
+    if List.create(params[:list].permit(:email))
+      flash[:success] = 'Created List'
+    else
+      flash[:error] = 'Could not create list'
+    end
+
+
     redirect_to :back
   end
 
