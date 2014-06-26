@@ -18,7 +18,10 @@
 //= require editable/rails
 //= require_tree .
 
-$(document).ready(function() {
+var ready = function() {
     $('.editable').editable();
-})
+};
+
+$(document).on('page:load', ready)
+$(document).ready(ready);
 
