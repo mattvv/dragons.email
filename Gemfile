@@ -37,7 +37,8 @@ gem 'htmlentities'
 
 gem 'haml'
 gem 'rails_12factor'
-# gem 'bootstrap-editable-rails'
+
+gem 'x-editable-rails'
 
 
 # Use ActiveModel has_secure_password

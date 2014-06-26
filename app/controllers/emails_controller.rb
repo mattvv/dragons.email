@@ -19,6 +19,22 @@ class EmailsController < ApplicationController
     redirect_to :back
   end
 
+  def update
+    params[:email][:email].downcase! if params[:email][:email]
+    @email = Email.find(params[:id])
+
+
+    respond_to do |format|
+      if @email.update_attributes(params[:email].permit(:phone_number, :notes, :email, :name))
+        format.html { redirect_to :back, notice: 'Email was successfully updated.' }
+        format.json { head :no_content } # 204 No Content
+      else
+        format.html { redirect_to :back }
+        format.json { render json: @email.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   def destroy
     @email = Email.find(params[:id])
     if params[:list_id].nil?

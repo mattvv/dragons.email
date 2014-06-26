@@ -13,10 +13,10 @@
   %tbody
     - @emails.each do |email|
       %tr
-        %td= email.name
-        %td= email.email
-        %td= email.phone_number
-        %td= email.note
+        %td= editable email, :name
+        %td= editable email, :email
+        %td= editable email, :phone_number
+        %td= editable email, :note, type: 'textarea'
         %td
           - email.lists.each do |list|
             = link_to list.email.split('@').first, list_path(list.id), class: 'label label-default'
