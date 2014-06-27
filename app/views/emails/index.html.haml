@@ -1,52 +1,61 @@
 %h1
   Subscribers
 
-%table.table.table-striped
-  %thead
-    %tr
-      %th Name
-      %th Email
-      %th Phone Number
-      %th Notes
-      %th Lists
-      %th Actions
-  %tbody
-    - @emails.each do |email|
+.row
+  %table.table.table-striped
+    %thead
       %tr
-        %td= editable email, :name
-        %td= editable email, :email
-        %td= editable email, :phone_number
-        %td= editable email, :note, type: 'textarea'
-        %td
-          - email.lists.each do |list|
-            = link_to list.email.split('@').first, list_path(list.id), class: 'label label-default'
-        %td
-          = link_to 'Delete', email_path(email), method: :delete, class: 'btn btn-danger'
+        %th Name
+        %th Email
+        %th Phone Number
+        %th Notes
+        %th Lists
+        %th Actions
+    %tbody
+      - @emails.each do |email|
+        %tr
+          %td= editable email, :name
+          %td= editable email, :email
+          %td= editable email, :phone_number
+          %td= editable email, :note, type: 'textarea'
+          %td
+            - email.lists.each do |list|
+              = link_to list.email.split('@').first, list_path(list.id), class: 'label label-default'
+          %td
+            = link_to 'Delete', email_path(email), method: :delete, class: 'btn btn-danger'
 
-%h2 Add a Subscriber
-= form_for @email, html: { class: 'form-horizontal', role: 'form'} do |f|
-  .form-group
-    = f.label :email, class: 'control-label col-sm-2'
+.row
+  %h2 Add a Subscriber
+  = form_for @email, html: { class: 'form-horizontal', role: 'form'} do |f|
+    .form-group
+      = f.label :email, class: 'control-label col-sm-2'
+      .col-sm-10
+        = f.text_field :email, class: 'form-control', placeholder: 'enter subscribers email'
+
+    .form-group
+      = f.label :name, class: 'control-label col-sm-2'
+      .col-sm-10
+        = f.text_field :name, class: 'form-control', placeholder: 'who?'
+
+    .form-group
+      = f.label :phone_number, class: 'control-label col-sm-2'
+      .col-sm-10
+        = f.text_field :phone_number, class: 'form-control', placeholder: 'whats her digits?'
+
+    .form-group
+      = f.label :note, class: 'control-label col-sm-2'
+      .col-sm-10
+        = f.text_area :note, class: 'form-control', placeholder: 'any notes boss?'
+
     .col-sm-10
-      = f.text_field :email, class: 'form-control', placeholder: 'enter subscribers email'
+      = f.submit 'Add Subscriber', class: 'btn btn-default'
 
-  .form-group
-    = f.label :name, class: 'control-label col-sm-2'
+.row
+  %h2 Import Subscribers
+  = form_tag import_emails_path, multipart: true, html: { class: 'form_horizontal', role: 'form' } do
+    .form-group
+      .col-sm-10
+        = file_field_tag :file, class: 'form-control'
+
     .col-sm-10
-      = f.text_field :name, class: 'form-control', placeholder: 'who?'
-
-  .form-group
-    = f.label :phone_number, class: 'control-label col-sm-2'
-    .col-sm-10
-      = f.text_field :phone_number, class: 'form-control', placeholder: 'whats her digits?'
-
-  .form-group
-    = f.label :note, class: 'control-label col-sm-2'
-    .col-sm-10
-      = f.text_area :note, class: 'form-control', placeholder: 'any notes boss?'
-
-  .col-sm-10
-    = f.submit 'Add Subscriber', class: 'btn btn-default'
-
-
--#%h2 Import Subscribers
+      = submit_tag 'Import Subscribers', class: 'btn btn-default'

@@ -39,6 +39,7 @@ gem 'haml'
 gem 'rails_12factor'
 
 gem 'x-editable-rails'
+gem 'roo'
 
 
 # Use ActiveModel has_secure_password

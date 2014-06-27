@@ -50,4 +50,9 @@ class EmailsController < ApplicationController
     end
     redirect_to :back
   end
+
+  def import
+    Email.import(params[:file])
+    redirect_to :back, notice: 'Emails Imported.'
+  end
 end
