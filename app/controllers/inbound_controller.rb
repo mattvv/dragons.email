@@ -45,8 +45,10 @@ class InboundController < ApplicationController
           delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
         end
 
-        params[:Attachments].each do |attachment|
-          message.attachments[params[:Attachments][:Name]] = params[:Attachments][:Content]
+        unless params[:Attachments].nil?
+          params[:Attachments].each do |attachment|
+            message.attachments[params[:Attachments][:Name]] = params[:Attachments][:Content]
+          end
         end
 
         message.deliver
