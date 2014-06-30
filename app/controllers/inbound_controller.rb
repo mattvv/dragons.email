@@ -47,7 +47,7 @@ class InboundController < ApplicationController
 
         unless params[:Attachments].nil?
           params[:Attachments].each do |attachment|
-            message.attachments[attachment[:Name]] = attachment[:Content]
+            message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
           end
         end
 
