@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140626223023) do
+ActiveRecord::Schema.define(version: 20140630211334) do
 
   create_table "emails", force: true do |t|
     t.string   "email"
@@ -32,5 +32,14 @@ ActiveRecord::Schema.define(version: 20140626223023) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "messages", force: true do |t|
+    t.string   "message"
+    t.integer  "list_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "messages", ["list_id"], name: "index_messages_on_list_id"
 
 end

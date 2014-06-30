@@ -1,0 +1,16 @@
+%h1 SMS
+
+%p Send an SMS to everyone in a dragons group.
+
+%h2 Send an SMS
+= form_for @message, html: { class: 'form-horizontal', role: 'form'} do |f|
+  .form-group
+    = f.label :message, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.text_area :message, class: 'form-control', placeholder: 'SMS Message'
+  .form-group
+    = f.label :list, class: 'control-label col-sm-2'
+    .col-sm-10
+      = f.collection_select(:list_id, List.all, :id, :email, {}, {class: 'form-control'})
+  .col-sm-10
+    = f.submit 'Send SMS', class: 'btn btn-default'

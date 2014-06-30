@@ -26,6 +26,7 @@
       <ul class="nav navbar-nav">
         <li class="<%= 'active' if params[:controller] == 'lists' %>"><%= link_to 'Lists', lists_path %></li>
         <li class="<%= 'active' if params[:controller] == 'emails' %>"><%= link_to 'Subscribers', emails_path %></li>
+        <li class="<%= 'active' if params[:controller] == 'messages' %>"><%= link_to 'Sms', messages_path %></li>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

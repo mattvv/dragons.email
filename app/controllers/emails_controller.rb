@@ -11,7 +11,7 @@ class EmailsController < ApplicationController
       @email.lists << list
     else
       params[:email][:email].downcase!
-      @email = Email.new(params[:email].permit(:email, :name))
+      @email = Email.new(params[:email].permit(:email, :name, :phone_number, :note))
     end
 
 
