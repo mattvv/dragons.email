@@ -28,7 +28,14 @@ class Email < ActiveRecord::Base
       email.name = row['name'] if row['name']
       email.phone_number = row['phone'] if row['phone']
       email.phone_number = row['Phone Number'] if row['Phone Number']
-      email.note = row['Note'] if row['Note']
+
+      if row['note']  && email.note && !email.note.include?(row['note'])
+        email.note = "#{email.note}, #{row['note']}"
+      end
+
+      if row['Note']  && email.note && !email.note.include?(row['Note'])
+        email.note = "#{email.note}, #{row['Note']}"
+      end
 
       if row['Groups'] && email.note && !email.note.include?(row['Groups'])
         email.note = "#{email.note}, #{row['Groups']}"
