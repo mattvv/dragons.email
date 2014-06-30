@@ -16,11 +16,6 @@ class InboundController < ApplicationController
       render json: {} and return
     end
 
-    attachments = []
-    params[:Attachments].each do |attachment|
-      attachments << {name: params[:Attachments][:Name], content: params[:Attachments][:Content], content_type: params[:Attachments][:ContentType], content_id: params[:Attachments][:ContentID] }
-    end
-
 
     list = List.where(email: params[:To]).first
     from_name = params[:FromName]
@@ -38,7 +33,6 @@ class InboundController < ApplicationController
           subject         subject
           reply_to        list.email
           to              list.email
-          attachments     attachments
           text_part do
             body email[:TextBody]
           end
@@ -49,6 +43,10 @@ class InboundController < ApplicationController
           end
 
           delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+        end
+
+        params[:Attachments].each do |attachment|
+          message.attachments[params[:Attachments][:Name]] = params[:Attachments][:Content]
         end
 
         message.deliver
