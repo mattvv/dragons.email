@@ -16,6 +16,8 @@ class InboundController < ApplicationController
       render json: {} and return
     end
 
+    attachments = params[:Attachments]
+
 
     list = List.where(email: params[:To]).first
     from_name = params[:FromName]
@@ -40,6 +42,10 @@ class InboundController < ApplicationController
           html_part do
             content_type  'text/html; charset=UTF-8'
             body html
+          end
+
+          if attachments
+            attachments attachments
           end
 
           delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
