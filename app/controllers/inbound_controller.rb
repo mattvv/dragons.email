@@ -44,9 +44,7 @@ class InboundController < ApplicationController
             body html
           end
 
-          if attachments
-            attachments attachments
-          end
+          attachments attachments
 
           delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
         end
