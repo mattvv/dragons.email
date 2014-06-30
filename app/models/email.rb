@@ -18,10 +18,21 @@ class Email < ActiveRecord::Base
     header = spreadsheet.row(1)
     (2..spreadsheet.last_row).each do |i|
       row = Hash[[header, spreadsheet.row(i)].transpose]
-      email = find_by_email(row['email']) || new
-      email.email = row['email'].downcase
-      email.name = row['name']
-      email.phone_number = row['phone']
+
+      row['email'] = row['Email'] if row['Email']
+      email = Email.find_by_email(row['email'].downcase) || new
+      if row['First Name'] || row['Last Name']
+        row['name'] = "#{row['First Name']} #{row['Last Name']}"
+      end
+      email.email = row['email'].downcase if row['email']
+      email.name = row['name'] if row['name']
+      email.phone_number = row['phone'] if row['phone']
+      email.phone_number = row['Phone Number'] if row['Phone Number']
+      email.note = row['Note'] if row['Note']
+
+      if row['Groups'] && email.note && !email.note.include?(row['Groups'])
+        email.note = "#{email.note}, #{row['Groups']}"
+      end
       email.save!
     end
   end
