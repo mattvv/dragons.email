@@ -47,7 +47,7 @@ class InboundController < ApplicationController
 
         unless params[:Attachments].nil?
           params[:Attachments].each do |attachment|
-            message.attachments[params[:Attachments][:Name]] = params[:Attachments][:Content]
+            message.attachments[params[:Attachments][:Name].to_s] = params[:Attachments][:Content]
           end
         end
 
