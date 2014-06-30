@@ -30,7 +30,7 @@ class EmailsController < ApplicationController
 
 
     respond_to do |format|
-      if @email.update_attributes(params[:email].permit(:phone_number, :notes, :email, :name))
+      if @email.update_attributes(params[:email].permit(:phone_number, :note, :email, :name))
         format.html { redirect_to :back, notice: 'Email was successfully updated.' }
         format.json { head :no_content } # 204 No Content
       else
