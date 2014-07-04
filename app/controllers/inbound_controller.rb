@@ -24,34 +24,36 @@ class InboundController < ApplicationController
 
     if list
       if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-        email = params
-        coder = HTMLEntities.new
-        html = coder.decode(email[:HtmlBody])
-        message = Mail.new do
-          from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
-          bcc             list.formatted_emails_without(from) #bcc
-          subject         subject
-          reply_to        list.email
-          to              list.email
-          text_part do
-            body email[:TextBody]
+        list.formatted_emails_without(from).each do |emails|
+          email = params
+          coder = HTMLEntities.new
+          html = coder.decode(email[:HtmlBody])
+          message = Mail.new do
+            from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
+            bcc             emails #bcc
+            subject         subject
+            reply_to        list.email
+            to              list.email
+            text_part do
+              body email[:TextBody]
+            end
+
+            html_part do
+              content_type  'text/html; charset=UTF-8'
+              body html
+            end
+
+            delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
           end
 
-          html_part do
-            content_type  'text/html; charset=UTF-8'
-            body html
+          unless params[:Attachments].nil?
+            params[:Attachments].each do |attachment|
+              message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
+            end
           end
 
-          delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+          message.deliver
         end
-
-        unless params[:Attachments].nil?
-          params[:Attachments].each do |attachment|
-            message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
-          end
-        end
-
-        message.deliver
       else
         unless from.split("@").last == 'dragons.email'
           puts "email is not in list"
