@@ -34,11 +34,12 @@ class InboundController < ApplicationController
             send_email(emails,params, list.email)
             list_sent = true
           end
-        else
-          user = email_user params[:To].split('@').first
-          if user
-            direct_messages << user
-          end
+        end
+      else
+        count += 1
+        user = email_user params[:To].split('@').first
+        if user
+          direct_messages << user
         end
       end
     end
