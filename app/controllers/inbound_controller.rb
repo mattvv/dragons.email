@@ -26,6 +26,7 @@ class InboundController < ApplicationController
     from = params[:From]
 
     tos.each do |to|
+      puts "checking to #{to}"
       list = List.where(email: to).first
       if list
         count += 1
