@@ -23,12 +23,12 @@ class InboundController < ApplicationController
     count = 0
     direct_messages = []
     list_sent = false
+    from = params[:From]
 
     tos.each do |to|
       list = List.where(email: params[:To]).first
       if list
         count += 1
-        from = params[:From]
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
           list.formatted_emails_without(from).each do |emails|
             send_email(emails,params, list.email)
