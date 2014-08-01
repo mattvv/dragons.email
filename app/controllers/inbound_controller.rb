@@ -50,7 +50,7 @@ class InboundController < ApplicationController
           to_emails << "#{dm.name} <#{dm.email}>,"
         end
         send_email(to_emails, params, 'private@dragons.email')
-      else
+      else if !list_sent
         unless from.split("@").last == 'dragons.email'
           puts "email is not in list"
           #todo: deliver a bounced email.
