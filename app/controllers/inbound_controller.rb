@@ -26,7 +26,7 @@ class InboundController < ApplicationController
     from = params[:From]
 
     tos.each do |to|
-      list = List.where(email: params[:To]).first
+      list = List.where(email: to).first
       if list
         count += 1
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
