@@ -17,43 +17,34 @@ class InboundController < ApplicationController
     end
 
 
-    list = List.where(email: params[:To]).first
-    from_name = params[:FromName]
-    subject = params[:Subject]
-    from = params[:From]
+    tos = List.where(email: params[:To])
 
-    if list
-      if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-        list.formatted_emails_without(from).each do |emails|
-          email = params
-          coder = HTMLEntities.new
-          html = coder.decode(email[:HtmlBody])
-          message = Mail.new do
-            from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
-            bcc             emails #bcc
-            subject         subject
-            reply_to        list.email
-            to              list.email
-            text_part do
-              body email[:TextBody]
-            end
+    count = 0
+    direct_messages = []
 
-            html_part do
-              content_type  'text/html; charset=UTF-8'
-              body html
-            end
-
-            delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+    tos.each do |to|
+      if to
+        count++
+        if list.emails.map{ |x| x.email.downcase}.include? from.downcase
+          list.formatted_emails_without(from).each do |emails|
+            send_email(emails,params)
           end
-
-          unless params[:Attachments].nil?
-            params[:Attachments].each do |attachment|
-              message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
-            end
+        else
+          user = email_user id: to.split('@').first
+          if user
+            direct_messages << user
           end
-
-          message.deliver
         end
+      end
+    end
+
+    if count == 0
+      if direct_messages.count > 0
+        to_emails = "";
+        direct_messages.each do |dm|
+          to_emails << "#{dm.name} <#{dm.email}>,"
+        end
+        send_email(to_emails, params)
       else
         unless from.split("@").last == 'dragons.email'
           puts "email is not in list"
@@ -69,5 +60,46 @@ class InboundController < ApplicationController
       end
     end
     render json: {}
+  end
+
+  private
+
+  def send_email(to_emails, params)
+    email = params
+    from_name = params[:FromName]
+    subject = params[:Subject]
+    from = params[:From]
+    coder = HTMLEntities.new
+    html = coder.decode(email[:HtmlBody])
+    user = Email.where(from: from).first
+    message = Mail.new do
+      from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
+      bcc             to_emails #bcc
+      subject         subject
+      reply_to        "#{user.id}@dragons.email"
+      to              list.email
+      text_part do
+        body email[:TextBody]
+      end
+
+      html_part do
+        content_type  'text/html; charset=UTF-8'
+        body html
+      end
+
+      delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+    end
+
+    unless params[:Attachments].nil?
+      params[:Attachments].each do |attachment|
+        message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
+      end
+    end
+
+    message.deliver
+  end
+
+  def email_user(id)
+    Email.where(id: id).first
   end
 end
