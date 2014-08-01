@@ -25,6 +25,7 @@ class InboundController < ApplicationController
     from = params[:From]
 
     tos.each do |to|
+      puts "applying scan to #{to}"
       to = to.scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i).first
       puts "checking to #{to}"
       list = List.where(email: to).first
