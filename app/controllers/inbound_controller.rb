@@ -72,7 +72,7 @@ class InboundController < ApplicationController
     from = params[:From]
     coder = HTMLEntities.new
     html = coder.decode(email[:HtmlBody])
-    user = Email.where(from: from).first
+    user = Email.where(email: from).first
     message = Mail.new do
       from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
       bcc             to_emails #bcc
