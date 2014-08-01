@@ -31,6 +31,7 @@ class InboundController < ApplicationController
         count += 1
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
           list.formatted_emails_without(from).each do |emails|
+            puts "sending a message to group address #{list.email}"
             send_email(emails,params, list.email)
             list_sent = true
           end
@@ -50,6 +51,7 @@ class InboundController < ApplicationController
         direct_messages.each do |dm|
           to_emails << "#{dm.name} <#{dm.email}>,"
         end
+        puts "sending a message to private addresses #{to_emails}"
         send_email(to_emails, params, 'private@dragons.email')
       elsif !list_sent
         unless from.split("@").last == 'dragons.email'
@@ -83,7 +85,7 @@ class InboundController < ApplicationController
       bcc             to_emails #bcc
       subject         subject
       reply_to        "#{user.id}@dragons.email"
-      to              list_email
+      to              "#{params[:FromName]} <#{list_email}>"
       text_part do
         body email[:TextBody]
       end
