@@ -81,7 +81,7 @@ class InboundController < ApplicationController
     html = coder.decode(email[:HtmlBody])
     user = Email.where(email: from).first
     message = Mail.new do
-      from            "#{Dragons} <team@dragons.email>" #Adjust from to be from the original author.
+      from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
       bcc             to_emails #bcc
       subject         subject
       reply_to        "#{params[:FromName]} <#{user.id}@dragons.email>"
