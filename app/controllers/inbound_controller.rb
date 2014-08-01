@@ -32,7 +32,7 @@ class InboundController < ApplicationController
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
           list.formatted_emails_without(from).each do |emails|
             puts "sending a message to group address #{list.email}"
-            send_email(emails,params, list.email)
+            send_email(emails,params, "Dragons Email List <#{list.email}>")
             list_sent = true
           end
         end
@@ -52,7 +52,7 @@ class InboundController < ApplicationController
           to_emails << "#{dm.name} <#{dm.email}>,"
         end
         puts "sending a message to private addresses #{to_emails}"
-        send_email(to_emails, params, 'private@dragons.email')
+        send_email(to_emails, params)
       elsif !list_sent
         unless from.split("@").last == 'dragons.email'
           puts "email is not in list"
@@ -72,7 +72,7 @@ class InboundController < ApplicationController
 
   private
 
-  def send_email(to_emails, params, list_email)
+  def send_email(to_emails, params, list_email='')
     email = params
     from_name = params[:FromName]
     subject = params[:Subject]
@@ -81,11 +81,11 @@ class InboundController < ApplicationController
     html = coder.decode(email[:HtmlBody])
     user = Email.where(email: from).first
     message = Mail.new do
-      from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
+      from            "#{Dragons} <team@dragons.email>" #Adjust from to be from the original author.
       bcc             to_emails #bcc
       subject         subject
-      reply_to        "#{user.id}@dragons.email"
-      to              "#{params[:FromName]} <#{list_email}>"
+      reply_to        "#{params[:FromName]} <#{user.id}@dragons.email>"
+      to              list_email
       text_part do
         body email[:TextBody]
       end
