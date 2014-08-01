@@ -37,7 +37,6 @@ class InboundController < ApplicationController
           end
         end
       else
-        count += 1
         user = email_user to.split('@').first
         if user
           puts "got the email! #{user}"
