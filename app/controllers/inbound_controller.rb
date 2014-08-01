@@ -24,7 +24,8 @@ class InboundController < ApplicationController
 
     tos.each do |to|
       if to
-        count++
+        count += 1
+        from = params[:From]
         if to.emails.map{ |x| x.email.downcase}.include? from.downcase
           to.formatted_emails_without(from).each do |emails|
             send_email(emails,params, to.email)
