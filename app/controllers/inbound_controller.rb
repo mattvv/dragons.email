@@ -17,21 +17,23 @@ class InboundController < ApplicationController
     end
 
 
-    tos = List.where(email: params[:To])
+    tos = params[:To].split(", ")
+
 
     count = 0
     direct_messages = []
 
     tos.each do |to|
-      if to
+      list = List.where(email: params[:To])
+      if list
         count += 1
         from = params[:From]
-        if to.emails.map{ |x| x.email.downcase}.include? from.downcase
-          to.formatted_emails_without(from).each do |emails|
-            send_email(emails,params, to.email)
+        if list.emails.map{ |x| x.email.downcase}.include? from.downcase
+          list.formatted_emails_without(from).each do |emails|
+            send_email(emails,params, list.email)
           end
         else
-          user = email_user id: to.split('@').first
+          user = email_user id: params[:To].split('@').first
           if user
             direct_messages << user
           end
