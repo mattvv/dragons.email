@@ -38,8 +38,9 @@ class InboundController < ApplicationController
         end
       else
         count += 1
-        user = email_user params[:To].split('@').first
+        user = email_user to.split('@').first
         if user
+          puts "got the email! #{user}"
           direct_messages << user
         end
       end
@@ -108,6 +109,7 @@ class InboundController < ApplicationController
   end
 
   def email_user(id)
+    puts 'trying to find email! ' + id
     Email.where(id: id).first
   end
 end
