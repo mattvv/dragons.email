@@ -35,7 +35,7 @@ class InboundController < ApplicationController
             list_sent = true
           end
         else
-          user = email_user id: params[:To].split('@').first
+          user = email_user params[:To].split('@').first
           if user
             direct_messages << user
           end
