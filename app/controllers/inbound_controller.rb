@@ -17,8 +17,7 @@ class InboundController < ApplicationController
     end
 
 
-    tos = params[:To].split(", ")
-
+    tos = params[:To].split(", ") + params[:Cc].split(", ")
 
     count = 0
     direct_messages = []
