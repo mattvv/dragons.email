@@ -7,9 +7,9 @@ class InboundController < ApplicationController
     #todo: get the list from the To param (not including current senders email)
     #todo: ensure person who has sent (From) to the list is on the list.
 
-    if params[:To].include? "<"
-      params[:To] = params[:To].match(/[A-Za-z\d_\-\.+]+@[A-Za-z\d_\-\.]+\.[A-Za-z\d_\-]+/)[0]
-    end
+    # if params[:To].include? "<"
+    #   params[:To] = params[:To].match(/[A-Za-z\d_\-\.+]+@[A-Za-z\d_\-\.]+\.[A-Za-z\d_\-]+/)[0]
+    # end
 
     if params[:to] == params[:From]
       #this means it was sent from us!
@@ -26,7 +26,7 @@ class InboundController < ApplicationController
 
     tos.each do |to|
       puts "applying scan to #{to}"
-      to = to.scan(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i).first
+      to = to.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}/i)[0]
       puts "checking to #{to}"
       list = List.where(email: to).first
       if list
