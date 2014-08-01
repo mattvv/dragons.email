@@ -25,9 +25,9 @@ class InboundController < ApplicationController
     tos.each do |to|
       if to
         count++
-        if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-          list.formatted_emails_without(from).each do |emails|
-            send_email(emails,params)
+        if to.emails.map{ |x| x.email.downcase}.include? from.downcase
+          to.formatted_emails_without(from).each do |emails|
+            send_email(emails,params, to.email)
           end
         else
           user = email_user id: to.split('@').first
@@ -44,7 +44,7 @@ class InboundController < ApplicationController
         direct_messages.each do |dm|
           to_emails << "#{dm.name} <#{dm.email}>,"
         end
-        send_email(to_emails, params)
+        send_email(to_emails, params, 'private@dragons.email')
       else
         unless from.split("@").last == 'dragons.email'
           puts "email is not in list"
@@ -64,7 +64,7 @@ class InboundController < ApplicationController
 
   private
 
-  def send_email(to_emails, params)
+  def send_email(to_emails, params, list_email)
     email = params
     from_name = params[:FromName]
     subject = params[:Subject]
@@ -77,7 +77,7 @@ class InboundController < ApplicationController
       bcc             to_emails #bcc
       subject         subject
       reply_to        "#{user.id}@dragons.email"
-      to              list.email
+      to              list_email
       text_part do
         body email[:TextBody]
       end
