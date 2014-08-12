@@ -12,7 +12,7 @@ class MessagesController < ApplicationController
     @client = Twilio::REST::Client.new account_sid, auth_token
 
     message.list.emails.each do |email|
-      if email.phone_number
+      unless email.try(:phone_number).nil?
         @client.account.messages.create(
             :from => '+13238928500',
             :to => "+1#{email.phone_number}",
