@@ -16,7 +16,7 @@ class MessagesController < ApplicationController
         @client.account.messages.create(
             :from => '+13238928500',
             :to => "+1#{email.phone_number}",
-            :body => message.message
+            :body => "[Dragons] #{message.message}"
         )
       end
     end
