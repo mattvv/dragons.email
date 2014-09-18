@@ -51,7 +51,7 @@ class InboundController < ApplicationController
         if direct_messages.count > 0 && !list_sent
           to_emails = []
           direct_messages.each do |dm|
-            to_emails << {name: dm.name, email: dm.email, type: 'bcc'}
+            to_emails << {name: dm.name, email: dm.email, type: 'to'}
           end
           puts "sending a message to private addresses #{to_emails}"
           send_email(to_emails, params)
