@@ -21,6 +21,7 @@ class List < ActiveRecord::Base
 
   def mandrill_emails_without(from, tos)
     formatted = []
+    puts "filtering list without #{from} #{tos}"
     emails.each do |email|
       formatted << {email: email.email, name: email.name, type: 'bcc'} unless email.email == from || tos.include?(email.email)
     end

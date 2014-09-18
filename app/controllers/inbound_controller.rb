@@ -35,7 +35,7 @@ class InboundController < ApplicationController
         if list
           count += 1
           if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-            put "Sending mail to list! #{list.email}"
+            puts "Sending mail to list! #{list.email}"
             send_email list.mandrill_emails_without(from, tos), params, list.email
           end
         else
