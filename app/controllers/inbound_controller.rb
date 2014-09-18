@@ -76,7 +76,7 @@ class InboundController < ApplicationController
     mandrill = Mandrill::API.new ENV['MANDRILL_APIKEY']
 
     coder = HTMLEntities.new
-    html = coder.decode(params[:HtmlBody])
+    html = coder.decode(params['HtmlBody'])
     # user = Email.where(email: from).first
     message = {
         subject: params[:Subject],
