@@ -33,7 +33,7 @@ class InboundController < ApplicationController
         puts "checking to #{to}"
         list = List.where(email: to).first
         if list
-          count += 1
+          count = count + 1
           if list.emails.map{ |x| x.email.downcase}.include? from.downcase
             puts "Sending mail to list! #{list.email}"
             send_email list.mandrill_emails_without(from, tos), params, list.email
@@ -89,9 +89,9 @@ class InboundController < ApplicationController
     }
 
     unless params[:Attachments].nil?
-      message.attachments = []
+      message[:attachments] = []
       params[:Attachments].each do |attachment|
-        message.attachments << { type: attachment[:ContentType], name: attachment[:Name], content: attachment[:Content] }
+        message[:attachments] << { type: attachment[:ContentType], name: attachment[:Name], content: attachment[:Content] }
       end
     end
 
