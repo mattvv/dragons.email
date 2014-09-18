@@ -79,13 +79,17 @@ class InboundController < ApplicationController
     coder = HTMLEntities.new
     html = coder.decode(params[:HtmlBody])
     user = Email.where(email: params[:From]).first
+
+    unless list_email.blank?
+      to_emails = [{email: list_email, type: 'to'}] + to_emails
+    end
     message = {
         subject: params[:Subject],
         from_name: params[:FromName],
         from_email: "#{user.id}@dragons.email",
         text: params[:TextBody],
         html: html,
-        to: [{email: list_email, type: 'to'}] + to_emails,
+        to: to_emails,
     }
 
     unless params[:Attachments].nil?
