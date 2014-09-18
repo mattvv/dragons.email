@@ -1,3 +1,5 @@
+require 'mandrill'
+
 class InboundController < ApplicationController
   protect_from_forgery except: [:create]
 
@@ -32,11 +34,7 @@ class InboundController < ApplicationController
       if list
         count += 1
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-          list.formatted_emails_without(from).each do |emails|
-            puts "sending a message to group address #{list.email}"
-            send_email(emails,params, "Dragons Email List <#{list.email}>")
-            list_sent = true
-          end
+          send_email mandrill_emails_without(from), list.email
         end
       else
         user = email_user to.split('@').first
@@ -49,9 +47,9 @@ class InboundController < ApplicationController
 
     if count == 0
       if direct_messages.count > 0 && !list_sent
-        to_emails = "";
+        to_emails = []
         direct_messages.each do |dm|
-          to_emails << "#{dm.name} <#{dm.email}>,"
+          to_emails << {name: dm.name, email: dm.email, type: 'bcc'}
         end
         puts "sending a message to private addresses #{to_emails}"
         send_email(to_emails, params)
@@ -75,38 +73,54 @@ class InboundController < ApplicationController
   private
 
   def send_email(to_emails, params, list_email='')
-    email = params
-    from_name = params[:FromName]
-    subject = params[:Subject]
-    from = params[:From]
-    coder = HTMLEntities.new
-    html = coder.decode(email[:HtmlBody])
-    user = Email.where(email: from).first
-    message = Mail.new do
-      from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
-      bcc             to_emails #bcc
-      subject         subject
-      reply_to        "#{params[:FromName]} <#{user.id}@dragons.email>"
-      to              list_email
-      text_part do
-        body email[:TextBody]
-      end
-
-      html_part do
-        content_type  'text/html; charset=UTF-8'
-        body html
-      end
-
-      delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
-    end
+    mandrill = Mandrill::API.new ENV['MANDRILL_APIKEY']
+    message = {
+        subject: subject,
+        from_name: from_name,
+        from_email: list_email,
+        text: email[:TextBody],
+        html: html,
+        to: [{email: list_email, type: 'to'}] + to_emails,
+        headers: {'Reply-To' => "#{user.id}@dragons.email"}
+    }
 
     unless params[:Attachments].nil?
       params[:Attachments].each do |attachment|
-        message.attachments[attachment[:Name]] =  Base64.decode64 attachment[:Content]
+        message.attachments << { type: attachment[:ContentType], name: attachment[:Name], content: Base64.decode64 attachment[:Content] }
       end
     end
 
-    message.deliver
+    sending = m.messages.send message
+    puts "did we sent message? #{sending}"
+
+    # email = params
+    # from_name = params[:FromName]
+    # subject = params[:Subject]
+    # from = params[:From]
+    # coder = HTMLEntities.new
+    # html = coder.decode(email[:HtmlBody])
+    # user = Email.where(email: from).first
+    # message = Mail.new do
+    #   from            "#{from_name} <team@dragons.email>" #Adjust from to be from the original author.
+    #   bcc             to_emails #bcc
+    #   subject         subject
+    #   reply_to        "#{params[:FromName]} <#{user.id}@dragons.email>"
+    #   to              list_email
+    #   text_part do
+    #     body email[:TextBody]
+    #   end
+    #
+    #   html_part do
+    #     content_type  'text/html; charset=UTF-8'
+    #     body html
+    #   end
+    #
+    #   delivery_method Mail::Postmark, :api_key => ENV['POSTMARK_API_KEY']
+    # end
+    #
+    #
+    #
+    # message.deliver
   end
 
   def email_user(id)

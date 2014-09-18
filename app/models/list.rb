@@ -18,4 +18,14 @@ class List < ActiveRecord::Base
 
     slice
   end
+
+  def mandrill_emails_without(from)
+    formatted = []
+    emails.each do |email|
+      formatted << {email: email.email, name: email.name, type: 'bcc'} unless email.email == from
+    end
+
+    formatted
+
+  end
 end
