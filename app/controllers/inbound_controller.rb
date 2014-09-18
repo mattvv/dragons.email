@@ -89,6 +89,7 @@ class InboundController < ApplicationController
     }
 
     unless params[:Attachments].nil?
+      message.attachments = []
       params[:Attachments].each do |attachment|
         message.attachments << { type: attachment[:ContentType], name: attachment[:Name], content: attachment[:Content] }
       end
