@@ -84,7 +84,7 @@ class InboundController < ApplicationController
         from_email: params[:From],
         text: params[:TextBody],
         html: html,
-        to: [{email: list_email, type: 'to'}] + to_emails,
+        to:  to_emails,
     }
 
     unless params[:Attachments].nil?
