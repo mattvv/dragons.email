@@ -86,7 +86,7 @@ class InboundController < ApplicationController
 
     unless params[:Attachments].nil?
       params[:Attachments].each do |attachment|
-        message.attachments << { type: attachment[:ContentType], name: attachment[:Name], content: Base64.decode64 attachment[:Content] }
+        message.attachments << { type: attachment[:ContentType], name: attachment[:Name], content: Base64.decode64(attachment[:Content]) }
       end
     end
 
