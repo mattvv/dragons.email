@@ -34,7 +34,7 @@ class InboundController < ApplicationController
       if list
         count += 1
         if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-          send_email list.mandrill_emails_without(from), list.email
+          send_email list.mandrill_emails_without(from), params, list.email
         end
       else
         user = email_user to.split('@').first
@@ -76,7 +76,7 @@ class InboundController < ApplicationController
     mandrill = Mandrill::API.new ENV['MANDRILL_APIKEY']
 
     coder = HTMLEntities.new
-    html = coder.decode(params['HtmlBody'])
+    html = coder.decode(params[:HtmlBody])
     # user = Email.where(email: from).first
     message = {
         subject: params[:Subject],
