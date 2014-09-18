@@ -26,35 +26,35 @@ class InboundController < ApplicationController
     list_sent = false
     from = params[:From]
 
-    tos.each do |to|
-      puts "applying scan to #{to}"
-      to = to.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}/i)[0]
-      puts "checking to #{to}"
-      list = List.where(email: to).first
-      if list
-        count += 1
-        if list.emails.map{ |x| x.email.downcase}.include? from.downcase
-          send_email list.mandrill_emails_without(from, tos), params, list.email
-        end
-      else
-        user = email_user to.split('@').first
-        if user
-          puts "got the email! #{user}"
-          direct_messages << user
+    unless from.split("@").last == 'dragons.email'
+      tos.each do |to|
+        puts "applying scan to #{to}"
+        to = to.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}/i)[0]
+        puts "checking to #{to}"
+        list = List.where(email: to).first
+        if list
+          count += 1
+          if list.emails.map{ |x| x.email.downcase}.include? from.downcase
+            send_email list.mandrill_emails_without(from, tos), params, list.email
+          end
+        else
+          user = email_user to.split('@').first
+          if user
+            puts "got the email! #{user}"
+            direct_messages << user
+          end
         end
       end
-    end
 
-    if count == 0
-      if direct_messages.count > 0 && !list_sent
-        to_emails = []
-        direct_messages.each do |dm|
-          to_emails << {name: dm.name, email: dm.email, type: 'bcc'}
-        end
-        puts "sending a message to private addresses #{to_emails}"
-        send_email(to_emails, params)
-      elsif !list_sent
-        unless from.split("@").last == 'dragons.email'
+      if count == 0
+        if direct_messages.count > 0 && !list_sent
+          to_emails = []
+          direct_messages.each do |dm|
+            to_emails << {name: dm.name, email: dm.email, type: 'bcc'}
+          end
+          puts "sending a message to private addresses #{to_emails}"
+          send_email(to_emails, params)
+        elsif !list_sent
           puts "email is not in list"
           #todo: deliver a bounced email.
           message = Mail.new do
@@ -77,14 +77,14 @@ class InboundController < ApplicationController
 
     coder = HTMLEntities.new
     html = coder.decode(params[:HtmlBody])
-    # user = Email.where(email: from).first
+    user = Email.where(email: params[:From]).first
     message = {
         subject: params[:Subject],
         from_name: params[:FromName],
-        from_email: params[:From],
+        from_email: user.email,
         text: params[:TextBody],
         html: html,
-        to:  to_emails,
+        to: [{email: list_email, type: 'to'}] + to_emails,
     }
 
     unless params[:Attachments].nil?
