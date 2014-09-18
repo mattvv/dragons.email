@@ -74,12 +74,15 @@ class InboundController < ApplicationController
 
   def send_email(to_emails, params, list_email='')
     mandrill = Mandrill::API.new ENV['MANDRILL_APIKEY']
+
+    coder = HTMLEntities.new
+    html = coder.decode(email[:HtmlBody])
     # user = Email.where(email: from).first
     message = {
         subject: params[:Subject],
         from_name: params[:FromName],
         from_email: params[:From],
-        text: email[:TextBody],
+        text: params[:TextBody],
         html: html,
         to: [{email: list_email, type: 'to'}] + to_emails,
     }
