@@ -22,6 +22,9 @@ class List < ActiveRecord::Base
   def mandrill_emails_without(from, tos)
     formatted = []
     puts "filtering list without #{from} #{tos}"
+
+    tos = tos.map { |e| e.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,5}/i)[0] }
+
     emails.each do |email|
       formatted << {email: email.email, name: email.name, type: 'bcc'} unless email.email == from || tos.include?(email.email)
     end
