@@ -81,7 +81,7 @@ class InboundController < ApplicationController
     user = Email.where(email: params[:From]).first
 
     unless list_email.blank?
-      to_emails = to_emails
+      to_emails = [{email: list_email, type: 'to'}] +to_emails
     end
     message = {
         subject: params[:Subject],
