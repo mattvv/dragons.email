@@ -81,7 +81,7 @@ class InboundController < ApplicationController
     user = Email.where(email: params[:From]).first
 
     unless list_email.blank?
-      to_emails = [{email: list_email, type: 'to'}] + to_emails
+      to_emails = to_emails
     end
     message = {
         subject: params[:Subject],
@@ -90,6 +90,7 @@ class InboundController < ApplicationController
         text: params[:TextBody],
         html: html,
         to: to_emails,
+        headers: { "Reply-To" => user.email }
     }
 
     unless params[:Attachments].nil?
